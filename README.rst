@@ -5,7 +5,7 @@ Fixing up gmsh export files for CalculiX
 :tags: gmsh, calculix
 :author: Roland Smith
 
-.. Last modified: 2020-09-28T20:36:08+0200
+.. Last modified: 2020-10-21T19:13:34+0200
 
 Introduction
 ------------
@@ -14,7 +14,7 @@ Although I like the CalculiX_ FEA program very much, the built-in geometry
 generation and meshing module has some limitations. For example, it cannot
 generate geometry with holes.
 
-Therefore I like to use gmsh_ to generate geometry and meshes, which I then
+Therefore I sometimes like to use gmsh_ to generate geometry and meshes, which I then
 export in CalculiX INP format.
 In gmsh, I define physical groups for e.g. fixations, symmetry constraints and
 (distributed) loads.
