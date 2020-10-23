@@ -41,7 +41,7 @@ def main(args):
     opts = setup(args)
     logging.basicConfig(
         level=getattr(logging, opts.log.upper(), None),
-        format="%(levelname)s: %(message)s"
+        format="%(levelname)s: %(message)s",
     )
     logging.info(f"input file name: “{opts.infn}”.")
     logging.info(f"output file name: “{opts.outfn}”.")
@@ -99,8 +99,15 @@ def main(args):
         )
     # Write output file
     write_output(
-        opts.outfn, nodes, Eall, setnodes, surfnodes, volsets, surfaces, opts.reduced,
-        equations
+        opts.outfn,
+        nodes,
+        Eall,
+        setnodes,
+        surfnodes,
+        volsets,
+        surfaces,
+        opts.reduced,
+        equations,
     )
 
 
@@ -114,38 +121,34 @@ def setup(args):
         pass
 
     parser = argparse.ArgumentParser(
-        prog='gmsh-inp-filter', description=__doc__, formatter_class=CustomFormatter
+        prog="gmsh-inp-filter", description=__doc__, formatter_class=CustomFormatter
     )
     parser.add_argument(
-        '--log',
-        default='warning',
-        choices=['debug', 'info', 'warning', 'error', 'critical'],
-        help="logging level (defaults to 'warning')"
+        "--log",
+        default="warning",
+        choices=["debug", "info", "warning", "error", "critical"],
+        help="logging level (defaults to 'warning')",
     )
-    parser.add_argument('-v', '--version', action='version', version=__version__)
+    parser.add_argument("-v", "--version", action="version", version=__version__)
     parser.add_argument(
-        '-r',
-        '--reduced',
-        action='store_true',
+        "-r",
+        "--reduced",
+        action="store_true",
         default=False,
-        help='generate C3D20R elements instead of C3D20'
+        help="generate C3D20R elements instead of C3D20",
     )
     parser.add_argument(
-        '-e',
-        '--equations',
-        action='store_true',
+        "-e",
+        "--equations",
+        action="store_true",
         default=False,
-        help='replace shared nodes by equations'
+        help="replace shared nodes by equations",
     )
     parser.add_argument(
-        '-d',
-        '--debug',
-        action='store_true',
-        default=False,
-        help="print debugging info"
+        "-d", "--debug", action="store_true", default=False, help="print debugging info"
     )
-    parser.add_argument("infn", metavar='input', help="input file to process")
-    parser.add_argument("outfn", metavar='output', help="output file to generate")
+    parser.add_argument("infn", metavar="input", help="input file to process")
+    parser.add_argument("outfn", metavar="output", help="output file to generate")
     opts = parser.parse_args(args)
     return opts
 
@@ -186,7 +189,7 @@ def retrieve_nodes(headings, lines):
     nodes = {}
     for h in headings:
         if h[0].lower().startswith("node"):
-            for ln in lines[h[1]:h[2]]:
+            for ln in lines[h[1] : h[2]]:
                 idx, x, y, z = ln.split(",")
                 nodes[int(idx)] = (x.strip(), y.strip(), z.strip())
             # Assuming there is only one NODE section.
@@ -227,7 +230,11 @@ def retrieve_C3D20(headings, lines):
             n += 1
         else:
             setname = setname[0]
-        elements, setnodes, nreverse, = read_elements(lines, h[1], h[2], setname)
+        (
+            elements,
+            setnodes,
+            nreverse,
+        ) = read_elements(lines, h[1], h[2], setname)
         element_sets[setname] = elements
         all_elements.update(elements)
         for k, v in nreverse.items():
@@ -267,7 +274,11 @@ def retrieve_CPS8(headings, lines):
             n += 1
         else:
             setname = setname[0]
-        elements, nodes, _, = read_elements(lines, h[1], h[2], setname)
+        (
+            elements,
+            nodes,
+            _,
+        ) = read_elements(lines, h[1], h[2], setname)
         element_sets[setname] = elements
         node_sets[setname] = nodes
     return element_sets, node_sets
@@ -337,14 +348,16 @@ def fix_volume_set_names(lines, headings, volsets, nodes):
         if not lname.startswith("elset"):
             continue
         try:
-            setname = [s.strip()[6:] for s in name.split(",") if "elset=" in s.lower()][0]
+            setname = [s.strip()[6:] for s in name.split(",") if "elset=" in s.lower()][
+                0
+            ]
         except IndexError:
             logging.error(f"volume set “{name}” without name")
             continue
         if setname == "all":
             continue
         elset = []
-        for ln in lines[h[1]:h[2]]:
+        for ln in lines[h[1] : h[2]]:
             elset += [int(j) for j in ln.strip().split(",") if j]
         for oname in volsets.keys():
             if set(volsets[oname].keys()).issubset(set(elset)):
@@ -383,14 +396,16 @@ def fix_surface_set_names(lines, headings, surfsets, surfnodes):
         if not lname.startswith("elset"):
             continue
         try:
-            setname = [s.strip()[6:] for s in name.split(",") if "elset=" in s.lower()][0]
+            setname = [s.strip()[6:] for s in name.split(",") if "elset=" in s.lower()][
+                0
+            ]
         except IndexError:
             logging.error(f"surface set “{name}” without name")
             continue
         if setname == "all":
             continue
         elset = []
-        for ln in lines[h[1]:h[2]]:
+        for ln in lines[h[1] : h[2]]:
             elset += [int(j) for j in ln.strip().split(",") if j]
         for oname in surfsets.keys():
             if set(surfsets[oname].keys()).issubset(set(elset)):
@@ -426,7 +441,7 @@ def remap_surface(surface_set, Eall):
         (4, 7, 6, 5): "S2",
         (0, 4, 5, 1): "S3",
         (1, 5, 6, 2): "S4",
-        (1, 6, 7, 3): "S5"
+        (1, 6, 7, 3): "S5",
     }
     for snum, snodes in surface_set.items():
         ssnodes = set(snodes)
@@ -569,7 +584,7 @@ def write_node_sets(outf, nsets):
             continue
         outf.write(f"*NSET, NSET=N{nsname}\n")
         for nums in chunked(nsnodes, 10):
-            outf.write(', '.join(str(j) for j in nums) + ',\n')
+            outf.write(", ".join(str(j) for j in nums) + ",\n")
         logging.info(f"wrote nodeset “N{nsname}”.")
 
 
@@ -577,7 +592,7 @@ def write_element_sets(outf, elsets):
     for esname, elnums in elsets.items():
         outf.write(f"*ELSET, ELSET=E{esname}\n")
         for nums in chunked(elnums, 10):
-            outf.write(', '.join(str(j) for j in nums) + ',\n')
+            outf.write(", ".join(str(j) for j in nums) + ",\n")
         logging.info(f"wrote element set “E{esname}”.")
 
 
@@ -612,5 +627,5 @@ def chunked(iterable, n):
     return iter(ft.partial(take, n, iter(iterable)), [])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main(sys.argv[1:])
