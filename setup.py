@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-# file: setup-user.py
+# file: setup.py
 # vim:fileencoding=utf-8:fdm=marker:ft=python
 #
 # Copyright © 2020 R.F. Smith <rsmith@xs4all.nl>
 # Created: 2020-10-25T12:18:04+0100
-# Last modified: 2020-10-26T23:02:42+0100
+# Last modified: 2020-10-27T18:23:06+0100
 """Script to install scripts for the local user."""
 
 import os
@@ -54,4 +54,4 @@ for script, nt_ext in scripts:
     else:
         print(f"* '{script}' would be installed as '{destname}'")
         if destname2:
-            print("  or '{destname2}'")
+            print(f"  or '{destname2}'")

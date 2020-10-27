@@ -5,7 +5,7 @@ Fixing up gmsh export files for CalculiX
 :tags: gmsh, calculix
 :author: Roland Smith
 
-.. Last modified: 2020-10-24T15:43:40+0200
+.. Last modified: 2020-10-27T18:24:06+0100
 
 Introduction
 ------------
@@ -64,6 +64,20 @@ It is advised to have the following options set in your geo-file::
 You should also set ``Mesh.CharacteristicLengthMin`` and
 ``Mesh.CharacteristicLengthMax`` to sensible values in the geo-file, so that
 your geo-file generates a reproducible mesh.
+
+
+Installation
+------------
+
+To install it for the local user, run::
+
+    python setup.py install
+
+This will install it in the user path for Python scripts.
+For POSIX operating systems this is ususally ``~/.local/bin``.
+For ms-windows this is the ``Scripts`` directory of your Python installation
+or another local directory.
+Make sure that this directory is in your ``$PATH`` environment variable.
 
 
 Usage
