@@ -3,8 +3,9 @@
 # vim:fileencoding=utf-8:fdm=marker:ft=python
 #
 # Copyright © 2020 R.F. Smith <rsmith@xs4all.nl>
+# SPDX-License-Identifier: MIT
 # Created: 2020-10-25T12:18:04+0100
-# Last modified: 2020-10-27T18:23:06+0100
+# Last modified: 2022-01-20T18:10:41+0100
 """Script to install scripts for the local user."""
 
 import os
@@ -28,7 +29,7 @@ else:
 install = "install" in [a.lower() for a in sys.argv]
 if install:
     if not os.path.exists(destdir):
-        os.mkdir(destdir)
+        os.makedirs(destdir)
 else:
     print("(Use the 'install' argument to actually install scripts.)")
 # Actual installation.
