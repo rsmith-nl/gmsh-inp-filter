@@ -1,22 +1,21 @@
 Fixing up gmsh export files for CalculiX
 ########################################
 
-:date: 2020-09-28
+:date: 2024-02-04
 :tags: gmsh, calculix
 :author: Roland Smith
 
-.. Last modified: 2020-10-27T18:24:06+0100
+.. Last modified: 2024-02-04T21:45:40+0100
 
 Introduction
 ------------
 
 Although I like the CalculiX_ FEA program very much, the built-in geometry
 generation and meshing module has some limitations. For example, it cannot
-generate geometry with holes, and it basically only works with structured
-meshes.
+easily generate geometry with holes.
 
-Therefore I sometimes like to use gmsh_ to generate geometry and meshes, which I then
-export in CalculiX INP format.
+Therefore I sometimes like to use gmsh_ to generate geometry (or import it
+from STEP files) and meshes, which I then export in CalculiX INP format.
 In gmsh, I define physical groups for e.g. fixations, symmetry constraints and
 (distributed) loads.
 
@@ -48,16 +47,17 @@ The following options should be set in the geo-file for gmsh to generate
 output that this program can handle::
 
     Mesh.ElementOrder = 2; // Create second order elements.
-    Mesh.SubdivisionAlgorithm = 2; // All hex elements
-    Mesh.SecondOrderIncomplete = 1; // Use 20-node hex elements.
+    Mesh.SecondOrderIncomplete = 1;
     Mesh.Format = 39; // Save mesh as INP format.
     Mesh.SaveGroupsOfNodes = 1;
+    Mesh.SaveGroupsOfElements = 1;
 
-With these settings, the exported inp-file contains the C3D20 elements that
-this script expects.
+This will create second order tetrahedron elements (C3D10 in CalculiX)
 
-It is advised to have the following options set in your geo-file::
+If you want to generate hex elements (C3D20 in CalculiX), have the following
+options set in your geo-file::
 
+    Mesh.SubdivisionAlgorithm = 2; // All hex elements
     Mesh.Algorithm = 8;  // Frontal Delauney for quads.
     Mesh.Algorithm3D = 1; // Delauney
 
